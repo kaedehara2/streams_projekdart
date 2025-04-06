@@ -38,3 +38,14 @@ JAWABAN
 
 2. Commit Done
 
+## SOAL 4 PRAKTIKUM 1: DART STREAMS
+
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+- Lakukan commit hasil jawaban Soal 4 dengan pesan "P1: Jawaban Soal 4
+
+JAWABAN
+
+1. Hasil Screen capture
+![GIF](screencapture/hasilgif1.gif)
+
+2. Commit Done
