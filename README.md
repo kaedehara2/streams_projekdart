@@ -25,3 +25,16 @@ JAWABAN
 ![SSTUGAS](assets/sstugas2.png)
 
 2. Commit Done
+
+## SOAL 3 PRAKTIKUM 1: DART STREAMS
+
+- Jelaskan fungsi keyword yield* pada kode tersebut!
+- Apa maksud isi perintah kode tersebut?
+- Lakukan commit hasil jawaban Soal 3 dengan pesan "P1: Jawaban Soal 3"
+
+JAWABAN
+
+1. Keyword yield* digunakan untuk menyebarkan atau meneruskan seluruh nilai dari stream lain ke dalam stream saat ini. Dalam kode tersebut, yield* meneruskan semua nilai dari Stream.periodic, yang menghasilkan nilai baru setiap satu detik. Setiap nilai yang dihasilkan adalah warna dari daftar colors, dengan indeks yang berubah-ubah mengikuti waktu (t). Jadi, fungsi getColors() akan terus mengeluarkan warna secara bergantian setiap detik dari daftar colors melalui stream.
+
+2. Commit Done
+
