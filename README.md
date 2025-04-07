@@ -183,5 +183,6 @@ Penjelasan
 Kesimpulan
 Langkah 13 hingga 15 digunakan untuk mengimplementasikan dan menguji penanganan error pada stream. Error dikirim menggunakan addError(), lalu ditangani melalui listener onError(), dan hasilnya akan ditampilkan dengan mengubah nilai lastNumber menjadi -1 sebagai indikator bahwa error telah terjadi. Ini penting agar aplikasi tetap stabil meskipun terjadi kesalahan dalam aliran data.
 
-2. ![SSTUGAS](assets/sstugas3.png)
+2. 
+![SSTUGAS](assets/sstugas3.png)
 commit done
