@@ -34,69 +34,98 @@ class _StreamHomePageState extends State<StreamHomePage> {
   late ColorStream colorStream;
 
   int lastNumber = 0;
-  late StreamController numberStreamController;
+  late StreamController<int> numberStreamController;
   late NumberStream numberStream;
   late StreamTransformer<int, int> transformer;
+  late StreamSubscription subscription;
+
+  void stopStream() {
+    numberStreamController.close();
+  }
 
   @override
   void initState() {
-    super.initState();
+    super.initState(); // ✅ dipanggil sekali di awal
 
     numberStream = NumberStream();
     numberStreamController = numberStream.controller;
 
-    transformer = StreamTransformer<int, int>.fromHandlers(
-      handleData: (value, sink) {
-        sink.add(value * 10);
-      },
-      handleError: (error, trace, sink) {
-        sink.add(-1);
-      },
-      handleDone: (sink) => sink.close(),
-    );
-
-    Stream transformedStream =
-        numberStreamController.stream.transform(transformer);
-
-    transformedStream.listen((event) {
+    Stream<int> stream = numberStreamController.stream;
+    subscription = stream.listen((event) {
       setState(() {
         lastNumber = event;
       });
-    }).onError((error) {
+    });
+
+    subscription.onError((error) {
       setState(() {
         lastNumber = -1;
       });
     });
 
-    //numberStream = NumberStream();
-    //numberStreamController = numberStream.controller;
-    //Stream stream = numberStreamController.stream;
-    //stream.listen((event) {
-    //  setState(() {
-    //    lastNumber = event;
-    //  });
-    //}).onError((error){
-    //  setState(() {
-    //    lastNumber = -1;
-    //  });
-    //});
+    subscription.onDone(() {
+      print('OnDone was called');
+    });
 
-    //super.initState();
-    //colorStream = ColorStream();
-    //changeColor();
+    // transformer = StreamTransformer<int, int>.fromHandlers(
+    //   handleData: (value, sink) {
+    //     sink.add(value * 10);
+    //   },
+    //   handleError: (error, trace, sink) {
+    //     sink.add(-1);
+    //   },
+    //   handleDone: (sink) => sink.close(),
+    // );
+
+    // Stream transformedStream =
+    //     numberStreamController.stream.transform(transformer);
+
+    // transformedStream.listen((event) {
+    //   setState(() {
+    //     lastNumber = event;
+    //   });
+    // }).onError((error) {
+    //   setState(() {
+    //     lastNumber = -1;
+    //   });
+    // });
+
+    // numberStream = NumberStream();
+    // numberStreamController = numberStream.controller;
+    // Stream stream = numberStreamController.stream;
+    // stream.listen((event) {
+    //   setState(() {
+    //     lastNumber = event;
+    //   });
+    // }).onError((error){
+    //   setState(() {
+    //     lastNumber = -1;
+    //   });
+    // });
+
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
   }
 
   @override
   void dispose() {
     numberStreamController.close();
-    super.dispose();
+    subscription.cancel();
+    super.dispose(); // ✅ terakhir
   }
 
   void addRandomNumber() {
     Random random = Random();
     int MyNum = random.nextInt(10);
-    numberStream.addNumberToSink(MyNum);
-    //numberStream.addError();
+    if (!numberStreamController.isClosed) {
+      numberStream.addNumberToSink(MyNum);
+      // numberStream.addError();
+    } else {
+      setState(() {
+        lastNumber = -1;
+      });
+    }
   }
 
   void changeColor() async {
@@ -107,11 +136,11 @@ class _StreamHomePageState extends State<StreamHomePage> {
     });
   }
 
-  //await for (var eventColor in colorStream.getColors()) {
-  //  setState(() {
-  //    bgColor = eventColor;
-  //  });
-  //}
+  // await for (var eventColor in colorStream.getColors()) {
+  //   setState(() {
+  //     bgColor = eventColor;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -124,19 +153,26 @@ class _StreamHomePageState extends State<StreamHomePage> {
         child: SizedBox(
           width: double.infinity,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                lastNumber.toString(),
-                style: const TextStyle(fontSize: 24),
-              ),
-              ElevatedButton(
-                onPressed: () => addRandomNumber(),
-                child: const Text('New Random Number'),
-              ),
-            ],
-          ),
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    Text(
+      lastNumber.toString(),
+      style: const TextStyle(fontSize: 24),
+    ),
+    ElevatedButton(
+      onPressed: () => addRandomNumber(),
+      child: const Text('New Random Number'),
+    ),
+    ElevatedButton(
+      onPressed: () => stopStream(),
+      child: const Text('Stop Subscription'),
+      // onPressed: () => addRandomNumber(),
+      // child: const Text('New Random Number'),
+    ),
+  ],
+),
+
         ),
       ),
     );

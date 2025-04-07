@@ -246,4 +246,85 @@ Langkah 1–3 digunakan untuk memproses dan memanipulasi data stream sebelum dit
 
 3. commit done
 
+## SOAL 9 PRAKTIKUM 4: SUBSCRIBE KE STREAM EVENTS
+
+- Jelaskan maksud kode langkah 2, 6 dan 8 tersebut!
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+- Lalu lakukan commit dengan pesan "P4: Jawaban Soal 9".
+
+JAWABAN
+
+1. Penjelasan dari ketiga langkah tersebut—Langkah 2, 6, dan 8—berkaitan erat dengan penggunaan stream, controller, subscription, dan data flow dari stream di Flutter.
+
+Langkah 2: Menginisialisasi Stream dan Subscription
+```kotlin
+@override
+void initState() {
+  super.initState();
+
+  numberStream = NumberStream();
+  numberStreamController = numberStream.controller;
+
+  Stream stream = numberStreamController.stream;
+  subscription = stream.listen((event) {
+    setState(() {
+      lastNumber = event;
+    });
+  });
+}
+```
+
+Penjelasan:
+- initState() adalah fungsi yang dijalankan sekali saat widget pertama kali dibentuk.
+- numberStream = NumberStream(); membuat objek dari class NumberStream, yang kemungkinan punya StreamController<int>.
+- numberStreamController = numberStream.controller; mengambil controller dari objek tersebut.
+- stream.listen(...) mulai mendengarkan data yang masuk ke stream.
+- Saat stream menerima data (event), fungsi setState akan dijalankan, dan nilai lastNumber akan diperbarui, yang artinya UI akan ikut berubah sesuai nilai baru itu.
+
+➡️ Fungsinya: Menyambungkan aliran data stream ke UI supaya nilai terbaru bisa ditampilkan secara real-time.
+
+Langkah 6: Berhenti Mendengarkan Stream
+```kotlin
+subscription.cancel();
+```
+Penjelasan:
+- subscription.cancel() digunakan untuk menghentikan langganan dari stream.
+- Ini berarti widget tidak akan menerima data baru lagi dari stream setelah ini dipanggil.
+
+➡️ Fungsinya: Berguna ketika kita ingin menghentikan proses penerimaan data, misalnya saat user menekan tombol "Stop", atau ketika stream sudah tidak diperlukan.
+
+Langkah 8: Menambahkan Angka Acak ke Stream
+```kotlin
+void addRandomNumber() {
+  Random random = Random();
+  int MyNum = random.nextInt(10);
+  if (!numberStreamController.isClosed) {
+    numberStream.addNumberToSink(MyNum);
+    //numberStream.addError();
+  } else {
+    setState(() {
+      lastNumber = -1;
+    });
+  }
+}
+```
+Penjelasan:
+- Random random = Random(); membuat generator angka acak.
+- int MyNum = random.nextInt(10); menghasilkan angka acak dari 0 sampai 9.
+- if (!numberStreamController.isClosed) memastikan stream masih terbuka untuk menerima data.
+- numberStream.addNumberToSink(MyNum); mengirim angka acak itu ke dalam stream, yang otomatis akan dikirim ke subscriber, yaitu UI kita.
+- Jika stream sudah ditutup, maka akan mengatur lastNumber = -1, sebagai tanda error atau stream sudah tidak aktif.
+
+➡️ Fungsinya: Memberi input angka acak ke dalam stream agar bisa ditampilkan ke UI.
+
+Kesimpulan Alurnya:
+- Langkah 2: Inisialisasi dan mulai mendengarkan stream.
+- Langkah 8: Menambahkan angka ke stream, lalu UI merespons perubahan tersebut.
+- Langkah 6: Jika ingin berhenti menerima update dari stream, langganannya dihentikan.
+
+2. Hasil Screen capture 
+![GIF](screencapture/hasilgif4.gif)
+
+3. Commit Done
+
 
