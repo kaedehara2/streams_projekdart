@@ -133,3 +133,55 @@ Hubungan Langkah 8 dan 10:
 
 3. Commit Done
 
+## SOAL 7 PRAKTIKUM 2 :STREAM CONTROLLERS & SINKS
+
+- Jelaskan maksud kode langkah 13 sampai 15 tersebut!
+- Kembalikan kode seperti semula pada Langkah 15, comment addError() agar Anda dapat melanjutkan ke praktikum 3 berikutnya.
+- Lalu lakukan commit dengan pesan "P2: Jawaban Soal 7".
+
+JAWABAN
+
+1. Langkah 13-addError()
+```kotlin
+addError() {
+  controller.sink.addError('error');
+}
+```
+Penjelasan
+- Fungsi addError() digunakan untuk mengirim error ke dalam stream.
+- controller.sink.addError('error'); akan memicu stream menghasilkan error dengan pesan 'error'.
+- Ini akan ditangkap oleh listener yang mendengarkan error di langkah 14
+
+Langkah 14-Menangani Error di listener
+```kotlin
+}).onError((error){
+  setState(() {
+    lastNumber = -1;
+  });
+});
+```
+Penjelasan
+- Bagian ini adalah penanganan error (onError) pada stream listener.
+- Ketika ada error yang masuk (dari addError() tadi), maka blok ini akan dijalankan.
+- Di dalam setState, lastNumber diubah menjadi -1 sebagai indikator bahwa terjadi error.
+- UI kemudian akan menampilkan angka -1 sebagai tanda ada kesalahan (misalnya ketika pengguna menekan tombol error).
+
+Langkah 15-Memodifikasi addRandomNumber() untuk Uji Error
+```kotlin
+void addRandomNumber() {
+  Random random = Random();
+  //int MyNum = random.nextInt(10);
+  //numberStream.addNumberToSink(MyNum);
+  numberStream.addError();
+}
+```
+Penjelasan
+- Di langkah ini, fungsi addRandomNumber() tidak lagi menghasilkan angka acak.
+- Sebagai gantinya, ia mengirim error ke stream dengan memanggil numberStream.addError().
+- Ini akan langsung memicu bagian onError di langkah 14 dan membuat lastNumber menjadi -1
+
+Kesimpulan
+Langkah 13 hingga 15 digunakan untuk mengimplementasikan dan menguji penanganan error pada stream. Error dikirim menggunakan addError(), lalu ditangani melalui listener onError(), dan hasilnya akan ditampilkan dengan mengubah nilai lastNumber menjadi -1 sebagai indikator bahwa error telah terjadi. Ini penting agar aplikasi tetap stabil meskipun terjadi kesalahan dalam aliran data.
+
+2. ![SSTUGAS](assets/sstugas3.png)
+commit done
