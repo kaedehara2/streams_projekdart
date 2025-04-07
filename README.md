@@ -186,3 +186,64 @@ Langkah 13 hingga 15 digunakan untuk mengimplementasikan dan menguji penanganan 
 2. 
 ![SSTUGAS](assets/sstugas3.png)
 commit done
+
+
+## SOAL 8 PRAKTIKUM 3:INJEKSI DATA KE STREAMS
+
+- Jelaskan maksud kode langkah 1-3 tersebut!
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+- Lalu lakukan commit dengan pesan "P3: Jawaban Soal 8".
+
+JAWABAN
+
+1. Langkah 1
+```kotlin
+late StreamTransformer transformer;
+```
+- Menyatakan bahwa kita akan menggunakan StreamTransformer namun akan menginisialisasikannya nanti.
+Tipe datanya belum ditentukan secara eksplisit, tapi nanti akan diisi dengan StreamTransformer<int, int>.
+
+Langkah 2
+```kotlin
+transformer = StreamTransformer<int, int>.fromHandlers(
+  handleData: (value, sink) {
+    sink.add(value * 10);
+  },
+  handleError: (error, trace, sink){
+    sink.add(-1);
+  },
+  handleDone: (sink) => sink.close()
+);
+```
+Di sini kita membuat transformer yang berfungsi untuk memanipulasi data dari stream:
+- handleData: jika data masuk (misalnya angka 2), maka akan dikalikan 10 → hasil: 20.
+- handleError: jika ada error, maka akan mengembalikan nilai -1.
+- handleDone: jika stream selesai, maka akan menutup sink.
+
+Langkah 3
+```kotlin
+stream.transform(transformer).listen((event){
+  setState(() {
+    lastNumber = event;
+  });
+}).onError((error) {
+  setState(() {
+    lastNumber = -1;
+  });
+});
+super.initState();
+```
+Di sini, stream (aliran data) di-transform dengan transformer yang telah dibuat:
+- Setiap data yang diterima dari stream akan diproses oleh transformer.
+- Jika tidak error, hasil akhirnya (yang sudah dikalikan 10) akan ditampilkan di UI (lastNumber).
+- Jika ada error, maka lastNumber akan diset menjadi -1.
+
+Kesimpulan:
+Langkah 1–3 digunakan untuk memproses dan memanipulasi data stream sebelum ditampilkan ke layar. Data asli yang masuk ke stream akan dikalikan 10 terlebih dahulu melalui transformer, dan jika terjadi error, nilai default -1 akan ditampilkan. Ini menunjukkan pemanfaatan StreamTransformer untuk filtering dan manipulasi data di Flutter secara reaktif.
+
+2. Hasil Screen capture
+![GIF](screencapture/hasilgif3.gif)
+
+3. commit done
+
+

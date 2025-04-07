@@ -36,27 +36,54 @@ class _StreamHomePageState extends State<StreamHomePage> {
   int lastNumber = 0;
   late StreamController numberStreamController;
   late NumberStream numberStream;
+  late StreamTransformer<int, int> transformer;
 
   @override
   void initState() {
+    super.initState();
+
     numberStream = NumberStream();
     numberStreamController = numberStream.controller;
-    Stream stream = numberStreamController.stream;
-    stream.listen((event) {
+
+    transformer = StreamTransformer<int, int>.fromHandlers(
+      handleData: (value, sink) {
+        sink.add(value * 10);
+      },
+      handleError: (error, trace, sink) {
+        sink.add(-1);
+      },
+      handleDone: (sink) => sink.close(),
+    );
+
+    Stream transformedStream =
+        numberStreamController.stream.transform(transformer);
+
+    transformedStream.listen((event) {
       setState(() {
         lastNumber = event;
       });
-    }).onError((error){
+    }).onError((error) {
       setState(() {
         lastNumber = -1;
       });
     });
 
+    //numberStream = NumberStream();
+    //numberStreamController = numberStream.controller;
+    //Stream stream = numberStreamController.stream;
+    //stream.listen((event) {
+    //  setState(() {
+    //    lastNumber = event;
+    //  });
+    //}).onError((error){
+    //  setState(() {
+    //    lastNumber = -1;
+    //  });
+    //});
+
     //super.initState();
     //colorStream = ColorStream();
     //changeColor();
-
-    super.initState();
   }
 
   @override
