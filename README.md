@@ -62,3 +62,74 @@ JAWABAN
 - Sedangkan listen akan langsung berlangganan ke stream dan mendengarkan semua data yang masuk secara asinkron tanpa menghentikan eksekusi kode lainnya. listen juga memberikan lebih banyak fleksibilitas karena mendukung parameter tambahan seperti onDone, onError, dan cancelOnError.
 
 2. Commit Done
+
+## SOAL 6 PRAKTIKUM 2: STREAM CONTROLLERS & SINKS
+
+- Jelaskan maksud kode langkah 8 dan 10 tersebut!
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+- Lalu lakukan commit dengan pesan "P2: Jawaban Soal 6".
+
+JAWABAN
+
+1. Langkah 8-initState()
+
+```kotlin
+@override
+void initState() {
+  numberStream = NumberStream();
+  numberStreamController = numberStream.controller;
+  Stream stream = numberStreamController.stream;
+  stream.listen((event) {
+    setState(() {
+      lastNumber = event;
+    });
+  });
+  super.initState();
+}
+```
+ Penjelasan:
+
+- Fungsi initState() dijalankan sekali saat pertama kali StatefulWidget dibangun.
+- numberStream = NumberStream();
+➤ Membuat objek dari kelas NumberStream yang berisi StreamController.
+
+- numberStreamController = numberStream.controller;
+➤ Mengakses controller dari objek NumberStream dan menyimpannya ke dalam variabel.
+
+- Stream stream = numberStreamController.stream;
+➤ Mengambil stream dari controller untuk didengarkan perubahannya.
+
+- stream.listen(...)
+➤ Mendengarkan data yang masuk ke stream, dan setiap ada data baru (event), maka:
+    - Fungsi setState dipanggil untuk memperbarui nilai lastNumber di UI.
+    - UI akan langsung merespons perubahan tersebut.
+
+langkah 10-addRandomNumber()
+```kotlin
+  void addRandomNumber() {
+  Random random = Random();
+  int MyNum = random.nextInt(10);
+  numberStream.addNumberToSink(MyNum);
+}
+```
+Penjelasan:
+- Fungsi ini digunakan untuk menghasilkan angka acak dari 0 sampai 9.
+- Random random = Random();
+➤ Membuat objek acak.
+
+- int MyNum = random.nextInt(10);
+➤ Menghasilkan angka acak antara 0 sampai 9.
+
+- numberStream.addNumberToSink(MyNum);
+➤ Mengirim angka tersebut ke stream menggunakan method addNumberToSink() (yang seharusnya sudah didefinisikan di dalam kelas NumberStream). ➤ Setelah angka terkirim ke stream, fungsi listen di langkah 8 akan menangkapnya dan memperbarui tampilan UI.
+
+Hubungan Langkah 8 dan 10:
+- Langkah 8 menyambungkan stream dengan UI agar bisa menampilkan data baru.
+- Langkah 10 mengirim data baru (angka acak) ke stream.
+- Ketika data dikirim melalui langkah 10, maka UI otomatis merespons karena sudah "mendengarkan" dari langkah 8
+
+2. Hasil Screen capture
+![GIF](screencapture/hasilgif2.gif)
+
+3. Commit Done
+
