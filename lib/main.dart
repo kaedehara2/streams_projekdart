@@ -38,6 +38,8 @@ class _StreamHomePageState extends State<StreamHomePage> {
   late NumberStream numberStream;
   late StreamTransformer<int, int> transformer;
   late StreamSubscription subscription;
+  late StreamSubscription subscription2; // ✅ listener kedua
+  String values = ''; // ✅ untuk menyimpan angka-angka
 
   void stopStream() {
     numberStreamController.close();
@@ -45,15 +47,25 @@ class _StreamHomePageState extends State<StreamHomePage> {
 
   @override
   void initState() {
-    super.initState(); // ✅ dipanggil sekali di awal
+    super.initState();
 
     numberStream = NumberStream();
     numberStreamController = numberStream.controller;
 
-    Stream<int> stream = numberStreamController.stream;
+    // ✅ Ubah menjadi broadcast stream
+    Stream<int> stream = numberStreamController.stream.asBroadcastStream();
+
+    // ✅ Listener pertama
     subscription = stream.listen((event) {
       setState(() {
         lastNumber = event;
+      });
+    });
+
+    // ✅ Listener kedua: Menyimpan angka ke variabel values
+    subscription2 = stream.listen((event) {
+      setState(() {
+        values += '$event-';
       });
     });
 
@@ -112,6 +124,7 @@ class _StreamHomePageState extends State<StreamHomePage> {
   void dispose() {
     numberStreamController.close();
     subscription.cancel();
+    subscription2.cancel(); // ✅ batalkan listener kedua
     super.dispose(); // ✅ terakhir
   }
 
@@ -153,26 +166,29 @@ class _StreamHomePageState extends State<StreamHomePage> {
         child: SizedBox(
           width: double.infinity,
           child: Column(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    Text(
-      lastNumber.toString(),
-      style: const TextStyle(fontSize: 24),
-    ),
-    ElevatedButton(
-      onPressed: () => addRandomNumber(),
-      child: const Text('New Random Number'),
-    ),
-    ElevatedButton(
-      onPressed: () => stopStream(),
-      child: const Text('Stop Subscription'),
-      // onPressed: () => addRandomNumber(),
-      // child: const Text('New Random Number'),
-    ),
-  ],
-),
-
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                lastNumber.toString(),
+                style: const TextStyle(fontSize: 24),
+              ),
+              Text(
+                values, // ✅ Tampilkan deretan angka
+                style: const TextStyle(fontSize: 16),
+              ),
+              ElevatedButton(
+                onPressed: () => addRandomNumber(),
+                child: const Text('New Random Number'),
+              ),
+              ElevatedButton(
+                onPressed: () => stopStream(),
+                child: const Text('Stop Subscription'),
+                // onPressed: () => addRandomNumber(),
+                // child: const Text('New Random Number'),
+              ),
+            ],
+          ),
         ),
       ),
     );

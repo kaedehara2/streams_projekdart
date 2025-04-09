@@ -328,3 +328,25 @@ Kesimpulan Alurnya:
 3. Commit Done
 
 
+## SOAL 10 PRAKTIKUM 5: Multiple Streams Subscription
+
+1. mengapa error itu bisa terjadi?
+Error Bad state: Stream has already been listened to terjadi karena stream standar (single-subscription stream) di Dart hanya boleh didengarkan sekali menggunakan .listen().
+Pada kasus ini, stream yang sama (numberStreamController.stream) didengarkan lebih dari satu kali tanpa mengubahnya menjadi broadcast stream. Akibatnya, saat listener kedua mencoba mendengarkan, Dart melempar error karena stream sudah memiliki listener sebelumnya.
+
+![SSTUGAS](assets/sstugas4.png)
+
+## SOAL 11 PRAKTIKUM 5: Multiple Streams Subscription
+
+- Jelaskan mengapa hal itu bisa terjadi ?
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+- Lalu lakukan commit dengan pesan "P5: Jawaban Soal 10,11".
+
+JAWABAN 
+
+1. Hal itu bisa terjadi karena data yang masuk ke dalam StreamController ditransformasikan terlebih dahulu menggunakan StreamTransformer. Transformer ini memodifikasi setiap data (misalnya mengalikan angka dengan 10) sebelum diteruskan ke listener. Oleh karena itu, angka yang muncul pada tampilan utama adalah hasil transformasi, sedangkan angka-angka asli tetap tercatat dan ditampilkan di bawahnya.
+
+2. Hasil ScreenCapture
+![GIF](screencapture/hasilgif5.gif)
+
+3. Commit done
